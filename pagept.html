@@ -123,6 +123,7 @@
             align-items: center;
             padding: 0 20px;
             margin-bottom: 20px;
+            position: relative; /* 정렬 메뉴 위치 기준 */
         }
 
         .dropdown {
@@ -165,6 +166,51 @@
             height: 150px;
             border-radius: 5px;
         }
+
+        /* ====== 여기부터 기능 추가용 CSS ====== */
+
+        .hidden {
+            display: none;
+        }
+
+        /* 정렬 메뉴 (위치순/별점순/가격순) */
+        .sort-menu {
+            position: absolute;
+            left: 20px;
+            top: 35px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            font-size: 12px;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .sort-menu div {
+            padding: 6px 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .sort-menu div:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* 박스 안에 내용 표시용 */
+        .result-inner {
+            padding: 8px;
+            color: #ffffff;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .result-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -199,9 +245,11 @@
     <div class="recommend-area">
         <div class="dropdown"></div>
         <div class="random-button">랜덤 추천</div>
+        <!-- 정렬 메뉴는 JS에서 생성해서 이 안에 붙임 -->
     </div>
 
     <div class="result-grid">
+        <!-- JS에서 식당 카드가 들어감 -->
         <div class="result-box"></div>
         <div class="result-box"></div>
         <div class="result-box"></div>
@@ -211,19 +259,124 @@
     </div>
 </div>
 
-<!-- 버튼 클릭 시 색 변경 JS -->
+<!-- 버튼 클릭 색 변경 + 검색/정렬 기능 JS -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        /* ===== 버튼 on/off 토글 (기존 기능 유지) ===== */
         const buttons = document.querySelectorAll('.button');
-
         buttons.forEach(function (btn) {
             btn.addEventListener('click', function () {
-                // 클릭할 때마다 on/off 토글
                 this.classList.toggle('active');
             });
         });
+
+        /* ===== 맛집 데이터 (예시) ===== */
+        // distance: 위치(도보 분), rating: 별점, price: 1(저렴)~3(비쌈)
+        const restaurants = [
+            { name: "한양분식",   distance: 5,  rating: 4.5, price: 1 },
+            { name: "스시ERICA",  distance: 8,  rating: 4.8, price: 3 },
+            { name: "리틀파스타", distance: 3,  rating: 4.0, price: 2 },
+            { name: "ERICA중화반점", distance: 12, rating: 3.9, price: 1 },
+            { name: "공대앞치킨", distance: 7,  rating: 4.2, price: 2 },
+            { name: "기숙사카페", distance: 2,  rating: 3.7, price: 1 }
+        ];
+
+        let currentKeyword = "";     // 검색어
+        let currentSort = "none";    // distance, rating, price, none
+
+        const grid = document.querySelector('.result-grid');
+        const searchInput = document.querySelector('.search-input');
+        const searchButton = document.querySelector('.search-button');
+        const dropdown = document.querySelector('.dropdown');
+        const recommendArea = document.querySelector('.recommend-area');
+
+        /* ===== 정렬 메뉴 만들기 ===== */
+        const sortMenu = document.createElement('div');
+        sortMenu.className = 'sort-menu hidden';
+        sortMenu.innerHTML = `
+            <div data-sort="none">정렬 없음</div>
+            <div data-sort="distance">위치순</div>
+            <div data-sort="rating">별점순</div>
+            <div data-sort="price">가격순</div>
+        `;
+        recommendArea.appendChild(sortMenu);
+
+        dropdown.addEventListener('click', () => {
+            sortMenu.classList.toggle('hidden');
+        });
+
+        sortMenu.addEventListener('click', (e) => {
+            const sortType = e.target.dataset.sort;
+            if (!sortType) return;
+            currentSort = sortType;       // 선택한 정렬 옵션 기억
+            sortMenu.classList.add('hidden');
+            renderList();                 // 다시 그리기
+        });
+
+        /* ===== 검색 + 정렬 적용해서 리스트 렌더링 ===== */
+        function getFilteredSortedList() {
+            let list = restaurants.filter(r =>
+                r.name.toLowerCase().includes(currentKeyword.toLowerCase())
+            );
+
+            if (currentSort === 'distance') {
+                list.sort((a, b) => a.distance - b.distance);      // 가까운 순
+            } else if (currentSort === 'rating') {
+                list.sort((a, b) => b.rating - a.rating);          // 별점 높은 순
+            } else if (currentSort === 'price') {
+                list.sort((a, b) => a.price - b.price);            // 저렴한 순
+            }
+            return list;
+        }
+
+        function renderList() {
+            const list = getFilteredSortedList();
+            grid.innerHTML = "";
+
+            if (list.length === 0) {
+                const msg = document.createElement('p');
+                msg.textContent = '조건에 맞는 식당이 없습니다.';
+                msg.style.gridColumn = '1 / -1';
+                msg.style.textAlign = 'center';
+                msg.style.color = '#555';
+                msg.style.margin = '20px 0';
+                grid.appendChild(msg);
+                return;
+            }
+
+            list.forEach(r => {
+                const box = document.createElement('div');
+                box.className = 'result-box';
+                box.innerHTML = `
+                    <div class="result-inner">
+                        <div class="result-name">${r.name}</div>
+                        <div>
+                            위치 : 도보 ${r.distance}분<br>
+                            별점 : ${r.rating.toFixed(1)}점<br>
+                            가격 : ${"₩".repeat(r.price)}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(box);
+            });
+        }
+
+        /* ===== 검색 이벤트 ===== */
+        function doSearch() {
+            currentKeyword = searchInput.value.trim();
+            renderList();
+        }
+
+        searchButton.addEventListener('click', doSearch);
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        /* 처음 화면 렌더링 */
+        renderList();
     });
 </script>
 
 </body>
 </html>
+
