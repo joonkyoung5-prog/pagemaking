@@ -218,12 +218,14 @@
 
     <div class="button-section">
         <div class="button-row">
+            <!-- 카테고리 버튼 -->
             <div class="button category-button">양식</div>
             <div class="button category-button">한식</div>
             <div class="button category-button">중식</div>
             <div class="button category-button">일식</div>
         </div>
         <div class="button-row">
+            <!-- 필터 버튼 (아직 로직은 안 씀, 모양만 유지) -->
             <div class="button filter-button">분위기</div>
             <div class="button filter-button">해장</div>
             <div class="button filter-button">가성비</div>
@@ -256,19 +258,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    /* ===== 버튼 on/off 토글 (기존 기능 유지) ===== */
-    const buttons = document.querySelectorAll('.button');
-    buttons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            this.classList.toggle('active');
-        });
-    });
-
-    /* ===== 맛집 데이터 (ERICA 근처 실제 맛집 + 새로 찾은 곳들) ===== */
-    // distance: 위치(대략 도보 분), rating: 별점, price: 1(저렴)~3(비쌈)
+    /* ===== 맛집 데이터 (category 추가) ===== */
+    // category: '한식' | '일식' | '중식' | '양식'
+    // distance: 도보 분, rating: 별점, price: 1(저렴)~3(비쌈)
     const restaurants = [
         {
             name: "홍성 마라미방",
+            category: "중식",
             distance: 6,
             rating: 4.7,
             price: 2,
@@ -277,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "AP COFFEE & BAKERY",
+            category: "양식",
             distance: 7,
             rating: 4.6,
             price: 2,
@@ -285,6 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "은화수식당",
+            category: "한식",
             distance: 4,
             rating: 4.4,
             price: 1,
@@ -293,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "자이카",
+            category: "양식",
             distance: 4,
             rating: 4.5,
             price: 3,
@@ -301,6 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "명가떡볶이",
+            category: "한식",
             distance: 4,
             rating: 4.3,
             price: 1,
@@ -309,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "대홍 훠궈 샤브샤브",
+            category: "중식",
             distance: 4,
             rating: 4.2,
             price: 3,
@@ -317,6 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "투파인드피터 한양대 에리카",
+            category: "양식",
             distance: 3,
             rating: 4.6,
             price: 3,
@@ -325,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "미쳐버린파닭 안산한양대점",
+            category: "한식",
             distance: 6,
             rating: 4.4,
             price: 2,
@@ -333,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "앤의 식탁",
+            category: "양식",
             distance: 3,
             rating: 4.5,
             price: 3,
@@ -341,6 +345,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "핵밥 안산한양대점",
+            category: "한식",
             distance: 5,
             rating: 5.0,
             price: 2,
@@ -349,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "면식당 안산한양대점",
+            category: "한식",
             distance: 6,
             rating: 4.7,
             price: 2,
@@ -357,6 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "동아리식당",
+            category: "한식",
             distance: 6,
             rating: 4.6,
             price: 1,
@@ -365,6 +372,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "카바레 식당",
+            category: "한식",
             distance: 6,
             rating: 4.3,
             price: 2,
@@ -373,6 +381,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "젤리팩토리",
+            category: "양식",
             distance: 6,
             rating: 4.4,
             price: 2,
@@ -381,6 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "찌개찌개",
+            category: "한식",
             distance: 6,
             rating: 4.2,
             price: 2,
@@ -389,6 +399,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             name: "일미닭갈비파전 한양대점",
+            category: "한식",
             distance: 6,
             rating: 4.5,
             price: 2,
@@ -400,12 +411,41 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ===== 상태 & DOM 요소 ===== */
     let currentKeyword = "";
     let currentSort = "none";
+    let currentCategory = "";  // "" 이면 카테고리 필터 없음(전체)
 
     const grid = document.querySelector('.result-grid');
     const searchInput = document.querySelector('.search-input');
     const searchButton = document.querySelector('.search-button');
     const dropdown = document.querySelector('.dropdown');
     const recommendArea = document.querySelector('.recommend-area');
+
+    const categoryButtons = document.querySelectorAll('.category-button');
+    const filterButtons = document.querySelectorAll('.filter-button');
+
+    /* ===== 카테고리 버튼: 한 번에 하나만 선택 ===== */
+    categoryButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 이미 선택된 버튼 다시 누르면 전체보기로
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                currentCategory = "";
+            } else {
+                // 나머지 카테고리 비활성화
+                categoryButtons.forEach(b => b.classList.remove('active'));
+                // 클릭한 버튼만 활성화
+                btn.classList.add('active');
+                currentCategory = btn.textContent.trim();  // "한식", "일식" 등
+            }
+            renderList();
+        });
+    });
+
+    /* ===== 필터 버튼: 그냥 on/off 토글 (아직 로직은 없음) ===== */
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+        });
+    });
 
     /* ===== 정렬 메뉴 만들기 ===== */
     const sortMenu = document.createElement('div');
@@ -430,11 +470,15 @@ document.addEventListener('DOMContentLoaded', function () {
         renderList();
     });
 
-    /* ===== 검색 + 정렬 적용 ===== */
+    /* ===== 검색 + 카테고리 + 정렬 적용 ===== */
     function getFilteredSortedList() {
-        let list = restaurants.filter(r =>
-            r.name.toLowerCase().includes(currentKeyword.toLowerCase())
-        );
+        let list = restaurants.filter(r => {
+            const matchKeyword =
+                r.name.toLowerCase().includes(currentKeyword.toLowerCase());
+            const matchCategory =
+                currentCategory === "" || r.category === currentCategory;
+            return matchKeyword && matchCategory;
+        });
 
         if (currentSort === 'distance') {
             list.sort((a, b) => a.distance - b.distance);
@@ -468,6 +512,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="result-inner">
                     <div class="result-name">${r.name}</div>
                     <div>
+                        카테고리 : ${r.category}<br>
                         위치 : 도보 ${r.distance}분<br>
                         별점 : ${r.rating.toFixed(1)}점<br>
                         가격 : ${"₩".repeat(r.price)}<br>
