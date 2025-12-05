@@ -1,0 +1,173 @@
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px; 
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding-bottom: 20px;
+        }
+
+        .header {
+            background-color: #3b5998; 
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .button-section {
+            padding: 20px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            flex-grow: 1; 
+            flex-basis: 0; 
+            text-align: center;
+            padding: 10px 0;
+            margin: 0 5px; 
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        /* 기본 버튼 스타일 */
+        .category-button {
+            border: 1px solid #3b5998;
+            color: #3b5998;
+            background-color: white;
+        }
+
+        .filter-button {
+            border: 1px solid #7c7c7c;
+            color: #555;
+            background-color: white;
+        }
+
+        /* 클릭된(선택된) 상태 스타일 */
+        .category-button.active {
+            background-color: #3b5998;
+            color: #ffffff;
+        }
+
+        .filter-button.active {
+            background-color: #7c7c7c;
+            color: #ffffff;
+        }
+
+        .search-area {
+            display: flex;
+            align-items: center;
+            background-color: #e0e0e0;
+            margin: 20px;
+            height: 50px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            background-color: transparent;
+            border: none;
+            padding: 0 15px;
+            font-size: 16px;
+            outline: none;
+            color: #333;
+        }
+
+        .search-button {
+            width: 80px;
+            text-align: center;
+            color: #555;
+            font-weight: bold;
+            border-left: 1px solid #ccc;
+            height: 100%;
+            line-height: 50px;
+            cursor: pointer;
+        }
+
+        .recommend-area {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .dropdown {
+            width: 60px;
+            height: 30px;
+            background-color: #d1d1d1;
+            border-radius: 5px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .dropdown::after {
+            content: '▼';
+            font-size: 10px;
+            color: #555;
+        }
+
+        .random-button {
+            padding: 8px 15px;
+            background-color: #a0a0a0;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .result-box {
+            background-color: #7986ac;
+            height: 150px;
+            border-radius: 5px;
+            color: #fff;
+            padding: 10px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+
+        .result-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+
+        .result-info {
+            font-size: 12px;
+            opacity: 0.9;
+        }
