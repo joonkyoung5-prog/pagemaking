@@ -227,3 +227,10 @@ body {
 .clear-button:hover {
     background-color: #dcdcdc;
 }
+
+.result-box.recommended {
+    outline: 3px solid #ffffff;
+    box-shadow: 0 0 0 3px #3b5998 inset, 0 4px 10px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    transition: 0.15s;
+}

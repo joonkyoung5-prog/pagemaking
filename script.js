@@ -7,63 +7,50 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    /* ===== 맛집 데이터 ===== */
     const restaurants = [
         { name: "홍성 마라미방", 
             rating: 4.7, 
             image: "image/마라미방.png" },
-
         { name: "AP COFFEE & BAKERY", 
             rating: 4.6, 
             image: "image/카페.png" },
-
         { name: "은화수식당", 
             rating: 4.4, 
             image: "image/은화수 식당.png" },
-
         { name: "자이카", 
             rating: 4.5, 
             image: "image/자이카.png" },
-
         { name: "명가떡볶이", 
             rating: 4.3, 
             image: "image/명가떡볶이.png" },
-
-        { name: "대홍 훠궈 샤브샤브",
+        { name: "대홍 훠궈 샤브샤브", 
             rating: 4.2, 
             image: "image/대홍훠궈.png" },
-
         { name: "투파인드피터 한양대 에리카", 
             rating: 4.6, 
             image: "image/투파인드피터.jpg" },
-
         { name: "미쳐버린파닭 안산한양대점", 
             rating: 4.4, 
             image: "image/미파닭.jpg" },
-
         { name: "앤의 식탁", 
             rating: 4.5, 
             image: "image/앤의 식당.jpg" },
-
         { name: "핵밥 안산한양대점", 
             rating: 5.0, 
             image: "image/핵밥.jpg" },
-
         { name: "면식당 안산한양대점", 
             rating: 4.7, 
             image: "image/면식당.jpg" },
-
         { name: "동아리식당", 
             rating: 4.6, 
             image: "image/동아리식당.jpg" },
-
         { name: "젤리팩토리", 
             rating: 4.4, 
             image: "image/젤리팩토리.png" },
-
         { name: "찌개찌개", 
             rating: 4.2, 
             image: "image/찌개찌개.jpg" },
-
         { name: "일미닭갈비파전 한양대점", 
             rating: 4.5, 
             image: "image/일미.jpg" }
@@ -78,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchButton = document.querySelector('.search-button');
     const clearButton = document.querySelector('.clear-button');
     const dropdown = document.querySelector('.dropdown');
+    const randomButton = document.querySelector('.random-button'); 
     const recommendArea = document.querySelector('.recommend-area');
 
     /* ===== 정렬 메뉴 만들기 ===== */
@@ -109,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             r.name.toLowerCase().includes(currentKeyword.toLowerCase())
         );
 
-        // ✅ distance/price가 없더라도 안전하게 정렬되도록 기본값 처리
+        // distance/price 없더라도 안전하게
         if (currentSort === 'distance') {
             list.sort((a, b) => (a.distance ?? 999) - (b.distance ?? 999));
         } else if (currentSort === 'rating') {
@@ -118,6 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
             list.sort((a, b) => (a.price ?? 9) - (b.price ?? 9));
         }
         return list;
+    }
+
+    function clearRecommendedUI() {
+        const prev = grid.querySelectorAll('.result-box.recommended');
+        prev.forEach(p => p.classList.remove('recommended'));
     }
 
     function renderList() {
@@ -138,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
         list.forEach(r => {
             const box = document.createElement('div');
             box.className = 'result-box';
+            box.dataset.name = r.name; 
 
             box.innerHTML = `
                 <div class="result-inner">
@@ -153,18 +147,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    /* ===== 검색 ===== */
     function doSearch() {
         currentKeyword = searchInput.value.trim();
         renderList();
     }
 
     function resetSearch() {
-    searchInput.value = "";
-    currentKeyword = "";
-    renderList();
+        searchInput.value = "";
+        currentKeyword = "";
+        renderList();
     }
 
     searchButton.addEventListener('click', doSearch);
+
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') doSearch();
     });
@@ -172,6 +168,41 @@ document.addEventListener('DOMContentLoaded', function () {
     if (clearButton) {
         clearButton.addEventListener('click', resetSearch);
     }
+
+    
+    function doRandomPick() {
+        const list = getFilteredSortedList();
+
+        if (list.length === 0) {
+            alert('추천할 식당이 없습니다. 검색 조건을 초기화해보세요!');
+            return;
+        }
+
+        const picked = list[Math.floor(Math.random() * list.length)];
+
+        clearRecommendedUI();
+
+        const target = [...grid.querySelectorAll('.result-box')]
+            .find(box => box.dataset.name === picked.name);
+
+        if (target) {
+            target.classList.add('recommended');
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            renderList();
+            const retry = [...grid.querySelectorAll('.result-box')]
+                .find(box => box.dataset.name === picked.name);
+            if (retry) {
+                retry.classList.add('recommended');
+                retry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    }
+
+    if (randomButton) {
+        randomButton.addEventListener('click', doRandomPick);
+    }
+
     /* 초기 렌더링 */
     renderList();
 });
