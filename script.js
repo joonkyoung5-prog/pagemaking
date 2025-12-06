@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             grid.appendChild(msg);
             return;
         }
-
+    
         list.forEach(r => {
             const box = document.createElement('div');
             box.className = 'result-box';
@@ -146,6 +146,17 @@ document.addEventListener('DOMContentLoaded', function () {
             grid.appendChild(box);
         });
     }
+    // 🔽 이미 renderList 정의까지 끝난 뒤, DOMContentLoaded 함수 안에 추가
+    grid.addEventListener('click', (e) => {
+        const box = e.target.closest('.result-box');
+        if (!box) return;
+
+        const name = box.dataset.name; // renderList에서 이미 넣어둔 이름
+        if (!name) return;
+
+    // detail.html로 이동하면서 식당 이름을 쿼리스트링으로 넘김
+        window.location.href = `detail.html?name=${encodeURIComponent(name)}`;
+    });
 
     /* ===== 검색 ===== */
     function doSearch() {
