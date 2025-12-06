@@ -234,3 +234,45 @@ body {
     transform: translateY(-2px);
     transition: 0.15s;
 }
+
+/* ===================== */
+/* 상세 페이지용 스타일  */
+/* ===================== */
+
+.detail-main {
+    padding: 20px;
+}
+
+.detail-main h2 {
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+.detail-rating {
+    margin-bottom: 10px;
+}
+
+.detail-image {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 10px 0 14px;
+}
+
+.detail-desc {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+}
+
+.back-button {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
