@@ -7,137 +7,66 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* ===== 맛집 데이터 (ERICA 근처 실제 맛집 + 새로 찾은 곳들) ===== */
-    // distance: 위치(대략 도보 분), rating: 별점, price: 1(저렴)~3(비쌈)
     const restaurants = [
-        {
-            name: "홍성 마라미방",
-            distance: 6,
-            rating: 4.7,
-            price: 2,
-            address: "경기도 안산시 상록구 학사2길 1",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "AP COFFEE & BAKERY",
-            distance: 7,
-            rating: 4.6,
-            price: 2,
-            address: "경기도 안산시 상록구 한양대학로 60 한양타운 2층 201호, 202호",
-            hours: "매일 영업 (카페)"
-        },
-        {
-            name: "은화수식당",
-            distance: 4,
-            rating: 4.4,
-            price: 1,
-            address: "경기도 안산시 상록구 한양대학로 45-1",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "자이카",
-            distance: 4,
-            rating: 4.5,
-            price: 3,
-            address: "경기도 안산시 상록구 한양대학로 45-1 2층",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "명가떡볶이",
-            distance: 4,
-            rating: 4.3,
-            price: 1,
-            address: "경기도 안산시 상록구 한양대학로 47 1층",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "대홍 훠궈 샤브샤브",
-            distance: 4,
-            rating: 4.2,
-            price: 3,
-            address: "경기도 안산시 상록구 한양대학로 47 2층",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "투파인드피터 한양대 에리카",
-            distance: 3,
-            rating: 4.6,
-            price: 3,
-            address: "한양대 에리카 정문 앞 (본점)",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "미쳐버린파닭 안산한양대점",
-            distance: 6,
-            rating: 4.4,
-            price: 2,
-            address: "경기도 안산시 상록구 학사2길 3-3",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "앤의 식탁",
-            distance: 3,
-            rating: 4.5,
-            price: 3,
-            address: "한양대 에리카 정문 앞",
-            hours: "매일 영업 (상세 시간은 매장 안내 참조)"
-        },
-        {
-            name: "핵밥 안산한양대점",
-            distance: 5,
-            rating: 5.0,
-            price: 2,
-            address: "경기도 안산시 한양대학로 49 1층",
-            hours: "매일 11:00 ~ 22:00"
-        },
-        {
-            name: "면식당 안산한양대점",
-            distance: 6,
-            rating: 4.7,
-            price: 2,
-            address: "경기도 안산시 상록구 학사4길 2 1층",
-            hours: "매일 10:00 ~ 21:00"
-        },
-        {
-            name: "동아리식당",
-            distance: 6,
-            rating: 4.6,
-            price: 1,
-            address: "경기도 안산시 상록구 사동 학사2길 13",
-            hours: "매일 11:00 ~ 21:00"
-        },
-        {
-            name: "카바레 식당",
-            distance: 6,
-            rating: 4.3,
-            price: 2,
-            address: "한양대 에리카 근처 (예시)",
-            hours: "월~금, 일요일 영업 (토요일 휴무)"
-        },
-        {
-            name: "젤리팩토리",
-            distance: 6,
-            rating: 4.4,
-            price: 2,
-            address: "한양대 에리카 근처 (예시)",
-            hours: "매일 영업"
-        },
-        {
-            name: "찌개찌개",
-            distance: 6,
-            rating: 4.2,
-            price: 2,
-            address: "한양대 에리카 근처 (예시)",
-            hours: "매일 영업"
-        },
-        {
-            name: "일미닭갈비파전 한양대점",
-            distance: 6,
-            rating: 4.5,
-            price: 2,
-            address: "한양대 에리카 근처 (예시)",
-            hours: "매일 영업"
-        }
+        { name: "홍성 마라미방", 
+            rating: 4.7, 
+            image: "image/마라미방.png" },
+
+        { name: "AP COFFEE & BAKERY", 
+            rating: 4.6, 
+            image: "image/카페.png" },
+
+        { name: "은화수식당", 
+            rating: 4.4, 
+            image: "image/은화수 식당.png" },
+
+        { name: "자이카", 
+            rating: 4.5, 
+            image: "image/자이카.png" },
+
+        { name: "명가떡볶이", 
+            rating: 4.3, 
+            image: "image/명가떡볶이.png" },
+
+        { name: "대홍 훠궈 샤브샤브",
+            rating: 4.2, 
+            image: "image/대홍훠궈.png" },
+
+        { name: "투파인드피터 한양대 에리카", 
+            rating: 4.6, 
+            image: "image/투파인드피터.jpg" },
+
+        { name: "미쳐버린파닭 안산한양대점", 
+            rating: 4.4, 
+            image: "image/미파닭.jpg" },
+
+        { name: "앤의 식탁", 
+            rating: 4.5, 
+            image: "image/앤의 식당.jpg" },
+
+        { name: "핵밥 안산한양대점", 
+            rating: 5.0, 
+            image: "image/핵밥.jpg" },
+
+        { name: "면식당 안산한양대점", 
+            rating: 4.7, 
+            image: "image/면식당.jpg" },
+
+        { name: "동아리식당", 
+            rating: 4.6, 
+            image: "image/동아리식당.jpg" },
+
+        { name: "젤리팩토리", 
+            rating: 4.4, 
+            image: "image/젤리팩토리.png" },
+
+        { name: "찌개찌개", 
+            rating: 4.2, 
+            image: "image/찌개찌개.jpg" },
+
+        { name: "일미닭갈비파전 한양대점", 
+            rating: 4.5, 
+            image: "image/일미.jpg" }
     ];
 
     /* ===== 상태 & DOM 요소 ===== */
@@ -179,12 +108,13 @@ document.addEventListener('DOMContentLoaded', function () {
             r.name.toLowerCase().includes(currentKeyword.toLowerCase())
         );
 
+        // ✅ distance/price가 없더라도 안전하게 정렬되도록 기본값 처리
         if (currentSort === 'distance') {
-            list.sort((a, b) => a.distance - b.distance);
+            list.sort((a, b) => (a.distance ?? 999) - (b.distance ?? 999));
         } else if (currentSort === 'rating') {
-            list.sort((a, b) => b.rating - a.rating);
+            list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
         } else if (currentSort === 'price') {
-            list.sort((a, b) => a.price - b.price);
+            list.sort((a, b) => (a.price ?? 9) - (b.price ?? 9));
         }
         return list;
     }
@@ -207,17 +137,17 @@ document.addEventListener('DOMContentLoaded', function () {
         list.forEach(r => {
             const box = document.createElement('div');
             box.className = 'result-box';
+
             box.innerHTML = `
                 <div class="result-inner">
                     <div class="result-name">${r.name}</div>
                     <div>
-                        위치 : 도보 ${r.distance}분<br>
-                        별점 : ${r.rating.toFixed(1)}점<br>
-                        가격 : ${"₩".repeat(r.price)}<br>
-                        영업 : ${r.hours}
+                        별점 : ${(r.rating ?? 0).toFixed(1)}점
                     </div>
+                    ${r.image ? `<img src="${r.image}" alt="${r.name} 음식 사진" class="result-image">` : ""}
                 </div>
             `;
+
             grid.appendChild(box);
         });
     }
