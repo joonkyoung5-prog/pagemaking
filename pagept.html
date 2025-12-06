@@ -9,44 +9,43 @@
 </head>
 <body>
 
-<div class="container">
-    <header class="header">
-        <h1>ERICA의 맛집</h1>
-    </header>
+    <div class="container">
+        <header class="header">
+            <h1>ERICA의 맛집</h1>
+        </header>
 
-    <div class="button-section">
-        <div class="button-row">
-            <div class="button category-button">양식</div>
-            <div class="button category-button">한식</div>
-            <div class="button category-button">중식</div>
-            <div class="button category-button">일식</div>
+        <div class="button-section">
+            <div class="button-row">
+                <div class="button category-button">양식</div>
+                <div class="button category-button">한식</div>
+                <div class="button category-button">중식</div>
+                <div class="button category-button">일식</div>
+            </div>
+            <div class="button-row">
+                <div class="button filter-button">분위기</div>
+                <div class="button filter-button">해장</div>
+                <div class="button filter-button">가성비</div>
+                <div class="button filter-button">간편식</div>
+            </div>
         </div>
-        <div class="button-row">
-            <div class="button filter-button">분위기</div>
-            <div class="button filter-button">해장</div>
-            <div class="button filter-button">가성비</div>
-            <div class="button filter-button">간편식</div>
+
+        <div class="search-area">
+            <input type="text" class="search-input" placeholder="검색어를 입력하세요">
+            <div class="search-button">| 검색</div>
+            <div class="clear-button">초기화</div>
+        </div>
+
+        <div class="recommend-area">
+            <div class="dropdown"></div>
+            <div class="random-button">랜덤 추천</div>
+            <!-- sort-menu는 JS가 붙임 -->
+        </div>
+
+        <div class="result-grid">
+            <!-- JS에서 카드가 채워짐 -->
         </div>
     </div>
 
-    <div class="search-area">
-        <input type="text" class="search-input" placeholder="검색어를 입력하세요">
-        <div class="search-button">
-            | 검색
-        </div>
-    </div>
-
-    <div class="recommend-area">
-        <div class="dropdown"></div>
-        <div class="random-button">랜덤 추천</div>
-        <!-- sort-menu는 JS가 붙임 -->
-    </div>
-
-    <div class="result-grid">
-        <!-- JS에서 카드가 채워짐 -->
-    </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

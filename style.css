@@ -210,3 +210,20 @@ body {
     margin-top: 8px;
     display: block;
 }
+
+.clear-button {
+    width: 70px;
+    text-align: center;
+    color: #555;
+    font-weight: bold;
+    border-left: 1px solid #ccc;
+    height: 100%;
+    line-height: 50px;
+    cursor: pointer;
+    font-size: 12px;    
+    background-color: #e6e6e6; 
+}
+
+.clear-button:hover {
+    background-color: #dcdcdc;
+}

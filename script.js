@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const grid = document.querySelector('.result-grid');
     const searchInput = document.querySelector('.search-input');
     const searchButton = document.querySelector('.search-button');
+    const clearButton = document.querySelector('.clear-button');
     const dropdown = document.querySelector('.dropdown');
     const recommendArea = document.querySelector('.recommend-area');
 
@@ -157,11 +158,20 @@ document.addEventListener('DOMContentLoaded', function () {
         renderList();
     }
 
+    function resetSearch() {
+    searchInput.value = "";
+    currentKeyword = "";
+    renderList();
+    }
+
     searchButton.addEventListener('click', doSearch);
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') doSearch();
     });
 
+    if (clearButton) {
+        clearButton.addEventListener('click', resetSearch);
+    }
     /* 초기 렌더링 */
     renderList();
 });
