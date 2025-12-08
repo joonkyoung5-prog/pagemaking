@@ -21,6 +21,29 @@
             <img id="detail-image" class="detail-image" alt="음식 사진">
 
             <p id="detail-desc" class="detail-desc"></p>
+                <!-- 리뷰 영역 -->
+             <section class="review-section">
+                    <h3>리뷰</h3>
+
+                    <!-- 기존 + 새 리뷰가 들어갈 곳 -->
+                    <ul id="review-list" class="review-list"></ul>
+
+        <!-- 리뷰 작성 폼 -->
+                    <form id="review-form" class="review-form">
+                        <input
+                            type="text"
+                            id="review-author"
+                            placeholder="닉네임 (선택)"
+                        />
+                        <textarea
+                            id="review-text"
+                            placeholder="리뷰를 입력하세요"
+                            required
+                        ></textarea>
+                        <button type="submit">리뷰 남기기</button>
+                    </form>
+                </section>
+
         </main>
     </div>
 
