@@ -256,7 +256,7 @@ function initReviewForm() {
     const form = document.getElementById("review-form");
     const authorInput = document.getElementById("review-author");
     const textInput = document.getElementById("review-text");
-
+    const ratingSelect = document.getElementById("review-rating");
     if (!form || !textInput) return;
 
     form.addEventListener("submit", (e) => {
@@ -268,7 +268,9 @@ function initReviewForm() {
         const text = (textInput.value || "").trim();
         if (!text) return;
 
-        // 🔹 닉네임 비어 있으면 자동으로 "익명"
+        // ⭐ 선택한 별점 가져오기 (없으면 기본 5점)
+        const rating = ratingSelect ? parseInt(ratingSelect.value, 10) || 5 : 5;
+
         const displayAuthor = author || "익명";
 
         if (!extraReviews[name]) {
@@ -276,8 +278,14 @@ function initReviewForm() {
         }
         extraReviews[name].push({
             author: displayAuthor,
+            rating: rating,   
             text
         });
+
+        textInput.value = "";
+        // ratingSelect.value = "5";  // 항상 5점으로 초기화하고 싶으면 주석 해제
+        renderReviews();
+
 
         textInput.value = "";
         // authorInput.value = "";  // 닉네임까지 초기화하고 싶으면 주석 해제
