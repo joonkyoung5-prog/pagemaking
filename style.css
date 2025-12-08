@@ -276,3 +276,76 @@ body {
     background-color: #e0e0e0;
     cursor: pointer;
 }
+/* ===================== */
+/* 상세 페이지 리뷰 스타일 */
+/* ===================== */
+
+.review-section {
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.review-section h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.review-item {
+    padding: 6px 8px;
+    border-radius: 6px;
+    background-color: #f5f5f5;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.review-item-author {
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.review-item-text {
+    color: #333;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.review-form input,
+.review-form textarea {
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+}
+
+.review-form textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+.review-form button {
+    align-self: flex-end;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    background-color: #3b5998;
+    color: white;
+    font-size: 13px;
+    cursor: pointer;
+}
+.review-form button:hover {
+    opacity: 0.9;
+}
