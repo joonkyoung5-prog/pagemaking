@@ -200,6 +200,7 @@ function renderReviews() {
         li.className = "review-item";
         li.innerHTML = `
             <span class="review-item-author">${r.author || "익명"}</span>
+            <span class="review-item-rating">⭐ ${r.rating}</span>
             <span class="review-item-text">${r.text}</span>
         `;
         listEl.appendChild(li);
