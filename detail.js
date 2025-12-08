@@ -176,7 +176,7 @@ function getCurrentRestaurantName() {
     return params.get("name");
 }
 function renderReviews() {
-    const name = getCurrentRestaurantName();
+    const name = getQueryName();
     const listEl = document.getElementById("review-list");
     if (!listEl || !name) return;
 
@@ -184,9 +184,9 @@ function renderReviews() {
 
     const base = defaultReviews[name] || [];
     const extra = extraReviews[name] || [];
-    const all = [...base, ...extra];
 
-    if (all.length === 0) {
+    // 1) 기본 리뷰 먼저 출력 (수정/삭제 버튼 없음)
+    if (base.length === 0 && extra.length === 0) {
         const li = document.createElement("li");
         li.textContent = "등록된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!";
         li.style.fontSize = "13px";
@@ -195,17 +195,38 @@ function renderReviews() {
         return;
     }
 
-    all.forEach(r => {
+    base.forEach((r) => {
         const li = document.createElement("li");
         li.className = "review-item";
         li.innerHTML = `
             <span class="review-item-author">${r.author || "익명"}</span>
-            <span class="review-item-rating">⭐ ${r.rating}</span>
+            <span class="review-item-rating">⭐ ${r.rating ?? "?"}</span>
             <span class="review-item-text">${r.text}</span>
         `;
         listEl.appendChild(li);
     });
+
+    // 2) 사용자가 작성한 리뷰(extra) 출력 (수정/삭제 버튼 O)
+    extra.forEach((r, idx) => {
+        const li = document.createElement("li");
+        li.className = "review-item";
+        // 어떤 리뷰인지 구분하기 위한 정보
+        li.dataset.type = "extra";
+        li.dataset.index = String(idx);
+
+        li.innerHTML = `
+            <span class="review-item-author">${r.author || "익명"}</span>
+            <span class="review-item-rating">⭐ ${r.rating ?? "?"}</span>
+            <span class="review-item-text">${r.text}</span>
+            <div class="review-actions">
+                <button type="button" class="review-edit">수정</button>
+                <button type="button" class="review-delete">삭제</button>
+            </div>
+        `;
+        listEl.appendChild(li);
+    });
 }
+
 
 function getQueryName() {
     const params = new URLSearchParams(window.location.search);
@@ -297,4 +318,49 @@ function initReviewForm() {
 document.addEventListener("DOMContentLoaded", () => {
     renderReviews();
     initReviewForm();
+});
+// 리뷰 리스트에서 수정/삭제 버튼 처리 (이벤트 위임)
+document.addEventListener("DOMContentLoaded", () => {
+    const listEl = document.getElementById("review-list");
+    if (!listEl) return;
+
+    listEl.addEventListener("click", (e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        // 가장 가까운 li.review-item 찾기
+        const li = target.closest(".review-item");
+        if (!li) return;
+
+        const type = li.dataset.type;   // "extra" 인 경우만 조작
+        const indexStr = li.dataset.index;
+        const name = getQueryName();
+
+        if (type !== "extra" || !name || indexStr == null) {
+            // 기본 리뷰는 수정/삭제 불가 (아무 동작 안 함)
+            return;
+        }
+
+        const idx = parseInt(indexStr, 10);
+        if (!extraReviews[name] || !extraReviews[name][idx]) return;
+
+        // 삭제
+        if (target.classList.contains("review-delete")) {
+            if (confirm("이 리뷰를 삭제할까요?")) {
+                extraReviews[name].splice(idx, 1);
+                renderReviews();
+            }
+        }
+
+        // 수정
+        if (target.classList.contains("review-edit")) {
+            const current = extraReviews[name][idx];
+            const currentText = current.text || "";
+            const newText = prompt("리뷰 내용을 수정하세요:", currentText);
+            if (newText && newText.trim()) {
+                extraReviews[name][idx].text = newText.trim();
+                renderReviews();
+            }
+        }
+    });
 });

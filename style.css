@@ -358,3 +358,22 @@ body {
     font-family: inherit;
     background-color: #fff;
 }
+
+.review-actions {
+    margin-top: 4px;
+    text-align: right;
+}
+
+.review-actions button {
+    font-size: 11px;
+    padding: 3px 6px;
+    margin-left: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.review-actions button:hover {
+    background-color: #e0e0e0;
+}
