@@ -93,6 +93,61 @@ const restaurants = [
         desc: "닭갈비와 파전을 함께 즐길 수 있는 술안주 맛집입니다."
     },
 ];
+// ✅ 초기 기본 리뷰들 (식당별 예시)
+const defaultReviews = {
+    "홍성 마라미방": [
+        { author: "ERICA 공대생", text: "토달볶 진짜 찐… 마라 처음이면 국물 맵기 조절 꼭 하세요!" },
+        { author: "마라러버", text: "땅콩소스+땅콩가루 조합이 미쳤음. 꿔바로우 무조건 같이." }
+    ],
+    "AP COFFEE & BAKERY": [
+        { author: "카공러", text: "조용해서 과제하기 좋고 베이글이 아주 든든함." }
+    ],
+    "은화수식당": [
+        { author: "배고픈학부생", text: "치즈돈까스 양 많고 가성비 괜찮아요." }
+    ]
+    // 👉 필요하면 다른 가게들도 여기 계속 추가해도 됨
+};
+
+// ✅ 페이지 열어놓은 동안만 유지되는 임시 리뷰 저장소
+const extraReviews = {};
+function getCurrentRestaurantName() {
+    // 이미 getQueryName() 같은 함수가 있다면 그걸 재사용
+    if (typeof getQueryName === "function") {
+        return getQueryName();
+    }
+    const params = new URLSearchParams(window.location.search);
+    return params.get("name");
+}
+function renderReviews() {
+    const name = getCurrentRestaurantName();
+    const listEl = document.getElementById("review-list");
+    if (!listEl || !name) return;
+
+    listEl.innerHTML = "";
+
+    const base = defaultReviews[name] || [];
+    const extra = extraReviews[name] || [];
+    const all = [...base, ...extra];
+
+    if (all.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "등록된 리뷰가 없습니다. 첫 리뷰를 남겨보세요!";
+        li.style.fontSize = "13px";
+        li.style.color = "#666";
+        listEl.appendChild(li);
+        return;
+    }
+
+    all.forEach(r => {
+        const li = document.createElement("li");
+        li.className = "review-item";
+        li.innerHTML = `
+            <span class="review-item-author">${r.author || "익명"}</span>
+            <span class="review-item-text">${r.text}</span>
+        `;
+        listEl.appendChild(li);
+    });
+}
 
 function getQueryName() {
     const params = new URLSearchParams(window.location.search);
@@ -138,3 +193,42 @@ function renderDetail() {
 }
 
 document.addEventListener('DOMContentLoaded', renderDetail);
+
+function initReviewForm() {
+    const form = document.getElementById("review-form");
+    const authorInput = document.getElementById("review-author");
+    const textInput = document.getElementById("review-text");
+
+    if (!form || !textInput) return;
+
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = getCurrentRestaurantName();
+        if (!name) return;
+
+        const author = (authorInput.value || "").trim();
+        const text = (textInput.value || "").trim();
+        if (!text) return;
+
+        // 🔹 닉네임 비어 있으면 자동으로 "익명"
+        const displayAuthor = author || "익명";
+
+        if (!extraReviews[name]) {
+            extraReviews[name] = [];
+        }
+        extraReviews[name].push({
+            author: displayAuthor,
+            text
+        });
+
+        textInput.value = "";
+        // authorInput.value = "";  // 닉네임까지 초기화하고 싶으면 주석 해제
+
+        renderReviews();
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderReviews();
+    initReviewForm();
+});
