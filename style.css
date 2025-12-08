@@ -349,3 +349,12 @@ body {
 .review-form button:hover {
     opacity: 0.9;
 }
+
+.review-rating-select {
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    background-color: #fff;
+}
