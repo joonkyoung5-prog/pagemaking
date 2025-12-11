@@ -195,7 +195,28 @@ body {
     font-size: 12px;
     line-height: 1.4;
 }
+/* 카드 상단 구조 (이름 + 별점 + 찜 버튼) */
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
 
+/* 찜(즐겨찾기) 버튼 */
+.favorite-button {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    color: #dddddd;
+}
+
+.favorite-button.on {
+    color: #ffb400; /* 선택된 노란 별 */
+}
 .result-name {
     font-weight: bold;
     margin-bottom: 4px;

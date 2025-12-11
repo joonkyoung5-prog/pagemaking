@@ -181,7 +181,60 @@ const defaultReviews = {
 };
 
 // ✅ 페이지 열어놓은 동안만 유지되는 임시 리뷰 저장소
-const extraReviews = {};
+// ✅ 로컬스토리지 키
+const REVIEW_STORAGE_KEY = "ERICA_EXTRA_REVIEWS_V1";
+
+function loadExtraReviews() {
+    try {
+        const raw = localStorage.getItem(REVIEW_STORAGE_KEY);
+        if (!raw) return {};
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (e) {
+        console.error("리뷰 로드 오류:", e);
+        return {};
+    }
+}
+
+function saveExtraReviews() {
+    try {
+        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(extraReviews));
+    } catch (e) {
+        console.error("리뷰 저장 오류:", e);
+    }
+}
+
+// ✅ 페이지 간에 공유되는 추가 리뷰 (localStorage 기반)
+let extraReviews = loadExtraReviews();
+
+function updateRatingSummary() {
+    const name = getCurrentRestaurantName();
+    const ratingEl = document.getElementById("detail-rating");
+    if (!ratingEl || !name) return;
+
+    const restaurant = restaurants.find(r => r.name === name);
+    const baseRating = restaurant ? restaurant.rating : null;
+
+    const base = defaultReviews[name] || [];
+    const extra = extraReviews[name] || [];
+    const all = [...base, ...extra].filter(r => typeof r.rating === "number");
+
+    // 리뷰가 하나도 없으면 기본 별점만 표시
+    if (all.length === 0) {
+        if (typeof baseRating === "number") {
+            ratingEl.textContent = `⭐ ${baseRating.toFixed(1)}점`;
+        } else {
+            ratingEl.textContent = "";
+        }
+        return;
+    }
+
+    const sum = all.reduce((acc, r) => acc + r.rating, 0);
+    const avg = sum / all.length;
+    ratingEl.textContent = `⭐ 평균 ${avg.toFixed(1)}점 (${all.length}명 리뷰)`;
+}
+
+
 function getCurrentRestaurantName() {
     // 이미 getQueryName() 같은 함수가 있다면 그걸 재사용
     if (typeof getQueryName === "function") {
@@ -277,6 +330,7 @@ function renderDetail() {
     }
 
     nameEl.textContent = restaurant.name;
+    // 기본값(리뷰 하나도 없을 때 용) – 나중에 updateRatingSummary가 다시 덮어씀
     ratingEl.textContent = `⭐ ${restaurant.rating.toFixed(1)}점`;
     descEl.textContent = restaurant.desc ?? "";
 
@@ -291,16 +345,27 @@ function renderDetail() {
         }
     }
 
+    // ✅ 지도 이미지 + 클릭 시 네이버 지도 열기
     if (mapEl) {
         if (restaurant.mapimage) {
             mapEl.src = restaurant.mapimage;
             mapEl.alt = `${restaurant.name} 위치 지도`;
             mapEl.style.display = "block";
+
+            mapEl.style.cursor = "pointer";
+            mapEl.addEventListener("click", () => {
+                const query = encodeURIComponent(restaurant.name);
+                window.open(`https://map.naver.com/p/search/${query}`, "_blank");
+            });
         } else {
             mapEl.style.display = "none";
         }
     }
+
+    // ✅ 리뷰까지 포함해서 평균 별점으로 갱신
+    updateRatingSummary();
 }
+
 
         
 document.addEventListener('DOMContentLoaded', renderDetail);

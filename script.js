@@ -1,4 +1,41 @@
     document.addEventListener('DOMContentLoaded', function () {
+    const FAVORITE_KEY = 'ERICA_FAVORITES_V1';
+
+    function loadFavorites() {
+        try {
+            const raw = localStorage.getItem(FAVORITE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            console.error('즐겨찾기 불러오기 오류:', e);
+            return [];
+        }
+    }
+
+    let favoriteNames = loadFavorites();
+
+    function saveFavorites() {
+        try {
+            localStorage.setItem(FAVORITE_KEY, JSON.stringify(favoriteNames));
+        } catch (e) {
+            console.error('즐겨찾기 저장 오류:', e);
+        }
+    }
+
+    function isFavorite(name) {
+        return favoriteNames.includes(name);
+    }
+
+    function toggleFavorite(name) {
+        if (!name) return;
+        if (isFavorite(name)) {
+            favoriteNames = favoriteNames.filter(n => n !== name);
+        } else {
+            favoriteNames.push(name);
+        }
+        saveFavorites();
+    }
+
+
         /* ===== 버튼 on/off 토글 (기존 기능 유지) ===== */
         const buttons = document.querySelectorAll('.button');
         buttons.forEach(function (btn) {
@@ -166,10 +203,15 @@
                 .filter(btn => btn.classList.contains('active'))
                 .map(btn => btn.textContent.trim());
         }
+        function isFavoriteOnlyActive() {
+            const favBtn = document.querySelector('.favorite-only-button');
+            return favBtn && favBtn.classList.contains('active');
+        }
 
         function getFilteredSortedList() {
             const activeCats = getActiveCategories();
             const activeTags = getActiveFilters();
+            const favoriteOnly = isFavoriteOnlyActive();
 
             let list = restaurants.filter(r => {
                 const nameMatch =
@@ -183,7 +225,10 @@
                     activeTags.length === 0 ||
                     (r.tags ?? []).some(t => activeTags.includes(t));
 
-                return nameMatch && catMatch && tagMatch;
+                const favoriteMatch =
+                    !favoriteOnly || isFavorite(r.name);
+
+                return nameMatch && catMatch && tagMatch && favoriteMatch;
             });
 
             // distance/price 없더라도 안전하게
@@ -196,6 +241,7 @@
             }
             return list;
         }
+
 
         function clearRecommendedUI() {
             const prev = grid.querySelectorAll('.result-box.recommended');
@@ -222,11 +268,23 @@
                 box.className = 'result-box';
                 box.dataset.name = r.name; 
 
+                const favoriteOn = isFavorite(r.name);
+
                 box.innerHTML = `
                     <div class="result-inner">
-                        <div class="result-name">${r.name}</div>
-                        <div>
-                            별점 : ${(r.rating ?? 0).toFixed(1)}점
+                        <div class="result-header">
+                            <div>
+                                <div class="result-name">${r.name}</div>
+                                <div>별점 : ${(r.rating ?? 0).toFixed(1)}점</div>
+                            </div>
+                            <button
+                                type="button"
+                                class="favorite-button ${favoriteOn ? 'on' : ''}"
+                                data-name="${r.name}"
+                                aria-label="찜하기"
+                            >
+                                ${favoriteOn ? '★' : '☆'}
+                            </button>
                         </div>
                         ${r.image ? `<img src="${r.image}" alt="${r.name} 음식 사진" class="result-image">` : ""}
                     </div>
@@ -234,18 +292,36 @@
 
                 grid.appendChild(box);
             });
+
         }
         // 🔽 이미 renderList 정의까지 끝난 뒤, DOMContentLoaded 함수 안에 추가
         grid.addEventListener('click', (e) => {
-            const box = e.target.closest('.result-box');
+            const target = e.target;
+
+            // 1) 찜 버튼 클릭 시
+            const favBtn = target.closest('.favorite-button');
+            if (favBtn) {
+                const name = favBtn.dataset.name;
+                if (name) {
+                    toggleFavorite(name);
+                    const on = isFavorite(name);
+                    favBtn.classList.toggle('on', on);
+                    favBtn.textContent = on ? '★' : '☆';
+                }
+                e.stopPropagation();
+                return;
+            }
+
+            // 2) 그 외 카드 영역 클릭 시 상세 페이지로 이동
+            const box = target.closest('.result-box');
             if (!box) return;
 
-            const name = box.dataset.name; // renderList에서 이미 넣어둔 이름
+            const name = box.dataset.name; // renderList에서 넣어둔 이름
             if (!name) return;
 
-        // detail.html로 이동하면서 식당 이름을 쿼리스트링으로 넘김
             window.location.href = `detail.html?name=${encodeURIComponent(name)}`;
         });
+
 
         /* ===== 검색 ===== */
         function doSearch() {
