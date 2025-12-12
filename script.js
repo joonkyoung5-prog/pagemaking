@@ -1,6 +1,47 @@
     document.addEventListener('DOMContentLoaded', function () {
     const FAVORITE_KEY = 'ERICA_FAVORITES_V1';
 
+
+    // ✅ 상세 페이지와 동일한 로컬스토리지 키
+    const REVIEW_STORAGE_KEY = 'ERICA_EXTRA_REVIEWS_V1';
+
+    // ✅ 추가 리뷰 불러오기
+    function loadExtraReviews() {
+        try {
+            const raw = localStorage.getItem(REVIEW_STORAGE_KEY);
+            return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+            console.error('리뷰 불러오기 오류:', e);
+            return {};
+        }
+    }
+
+    // 메인 페이지에서도 추가 리뷰 정보 사용
+    let extraReviews = loadExtraReviews();
+
+    // 기본 별점이 몇 개의 리뷰 평균이라고 가정할지 (디폴트 리뷰 3개 있으니까 3으로 설정)
+    const BASE_REVIEW_COUNT = 3;
+
+    // ✅ 이름과 원래 rating 값으로 "실제 표시할 평균 별점" 계산
+    function getAverageRating(name, baseRating) {
+        const extra = (extraReviews[name] || []).filter(
+            r => typeof r.rating === 'number'
+        );
+
+        // 추가 리뷰가 하나도 없으면 원래 별점 그대로
+        if (extra.length === 0) {
+            return typeof baseRating === 'number' ? baseRating : null;
+        }
+
+        const extraSum = extra.reduce((acc, r) => acc + r.rating, 0);
+        const totalCount = BASE_REVIEW_COUNT + extra.length;
+        const totalSum = baseRating * BASE_REVIEW_COUNT + extraSum;
+
+        return totalSum / totalCount;
+    }
+
+    // ⬇︎ 여기 아래에 기존 restaurants 배열, 필터/정렬 함수들 그대로 유지
+
     function loadFavorites() {
         try {
             const raw = localStorage.getItem(FAVORITE_KEY);
@@ -263,35 +304,42 @@
                 return;
             }
         
-            list.forEach(r => {
-                const box = document.createElement('div');
-                box.className = 'result-box';
-                box.dataset.name = r.name; 
+    list.forEach(r => {
+        const box = document.createElement('div');
+        box.className = 'result-box';
+        box.dataset.name = r.name; 
 
-                const favoriteOn = isFavorite(r.name);
+        const favoriteOn = isFavorite(r.name);
 
-                box.innerHTML = `
-                    <div class="result-inner">
-                        <div class="result-header">
-                            <div>
-                                <div class="result-name">${r.name}</div>
-                                <div>별점 : ${(r.rating ?? 0).toFixed(1)}점</div>
-                            </div>
-                            <button
-                                type="button"
-                                class="favorite-button ${favoriteOn ? 'on' : ''}"
-                                data-name="${r.name}"
-                                aria-label="찜하기"
-                            >
-                                ${favoriteOn ? '★' : '☆'}
-                            </button>
-                        </div>
-                        ${r.image ? `<img src="${r.image}" alt="${r.name} 음식 사진" class="result-image">` : ""}
+        // ✅ 추가 리뷰까지 반영한 평균 별점
+        const avg = getAverageRating(r.name, r.rating);
+        const displayRating = avg != null
+            ? avg.toFixed(1)
+            : (r.rating ?? 0).toFixed(1);
+
+        box.innerHTML = `
+            <div class="result-inner">
+                <div class="result-header">
+                    <div>
+                        <div class="result-name">${r.name}</div>
+                        <div>별점 : ${displayRating}점</div>
                     </div>
-                `;
+                    <button
+                        type="button"
+                        class="favorite-button ${favoriteOn ? 'on' : ''}"
+                        data-name="${r.name}"
+                        aria-label="찜하기"
+                    >
+                        ${favoriteOn ? '★' : '☆'}
+                    </button>
+                </div>
+                ${r.image ? `<img src="${r.image}" alt="${r.name} 음식 사진" class="result-image">` : ""}
+            </div>
+        `;
 
-                grid.appendChild(box);
-            });
+        grid.appendChild(box);
+    });
+
 
         }
         // 🔽 이미 renderList 정의까지 끝난 뒤, DOMContentLoaded 함수 안에 추가
