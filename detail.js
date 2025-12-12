@@ -386,7 +386,7 @@ function initReviewForm() {
         const text = (textInput.value || "").trim();
         if (!text) return;
 
-        // ⭐ 선택한 별점 가져오기 (없으면 기본 5점)
+        // ⭐ 선택한 별점 (기본값 5점)
         const rating = ratingSelect ? parseInt(ratingSelect.value, 10) || 5 : 5;
 
         const displayAuthor = author || "익명";
@@ -396,21 +396,22 @@ function initReviewForm() {
         }
         extraReviews[name].push({
             author: displayAuthor,
-            rating: rating,   
+            rating: rating,
             text
         });
 
+        // ★ 여기 추가
+        saveExtraReviews();      // 로컬스토리지에 저장
+        renderReviews();         // 리뷰 리스트 다시 그림
+        updateRatingSummary();   // 평균 평점 다시 계산
+
+        // 입력창 초기화
         textInput.value = "";
-        // ratingSelect.value = "5";  // 항상 5점으로 초기화하고 싶으면 주석 해제
-        renderReviews();
-
-
-        textInput.value = "";
-        // authorInput.value = "";  // 닉네임까지 초기화하고 싶으면 주석 해제
-
-        renderReviews();
+        // authorInput.value = "";      // 닉네임도 초기화하고 싶으면 주석 해제
+        // ratingSelect.value = "5";    // 다시 5점으로 돌리고 싶으면 주석 해제
     });
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     renderReviews();
@@ -425,7 +426,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const target = e.target;
         if (!(target instanceof HTMLElement)) return;
 
-        // 가장 가까운 li.review-item 찾기
         const li = target.closest(".review-item");
         if (!li) return;
 
@@ -434,30 +434,40 @@ document.addEventListener("DOMContentLoaded", () => {
         const name = getQueryName();
 
         if (type !== "extra" || !name || indexStr == null) {
-            // 기본 리뷰는 수정/삭제 불가 (아무 동작 안 함)
+            // 기본 리뷰는 수정/삭제 불가
             return;
         }
 
         const idx = parseInt(indexStr, 10);
         if (!extraReviews[name] || !extraReviews[name][idx]) return;
 
-        // 삭제
+        // ★ 삭제
         if (target.classList.contains("review-delete")) {
             if (confirm("이 리뷰를 삭제할까요?")) {
                 extraReviews[name].splice(idx, 1);
+
+                // ★ 여기 추가
+                saveExtraReviews();
                 renderReviews();
+                updateRatingSummary();
             }
         }
 
-        // 수정
+        // ★ 수정
         if (target.classList.contains("review-edit")) {
             const current = extraReviews[name][idx];
             const currentText = current.text || "";
             const newText = prompt("리뷰 내용을 수정하세요:", currentText);
+
             if (newText && newText.trim()) {
                 extraReviews[name][idx].text = newText.trim();
+
+                // ★ 여기 추가
+                saveExtraReviews();
                 renderReviews();
+                updateRatingSummary();
             }
         }
+
     });
 });
